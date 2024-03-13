@@ -8,8 +8,12 @@ String url =
 class FetchTasks {
   List tasks = [];
   Future<List<TaskModel>?> onUrl() async {
-    final response = await http.get(Uri.parse(url));
-    tasks = jsonDecode(response.body);
+    try {
+      final response = await http.get(Uri.parse(url));
+      tasks = jsonDecode(response.body);
+    } catch (e) {
+      print(e);
+    }
     return tasks.map((e) => TaskModel.fromJson(e)).toList();
   }
 }
@@ -20,18 +24,22 @@ class UpdateTasks {
   String desc;
   UpdateTasks({required this.id, required this.title, required this.desc});
   Future<bool> onUrl() async {
-    final response = await http.put(
-      Uri.parse('$url/$id'),
-      body: jsonEncode(
-        {
-          "taskName": title,
-          "taskDescription": desc,
-        },
-      ),
-      headers: {'Content-Type': 'application/json'},
-    );
-    if (response.statusCode == 200) {
-      return true;
+    try {
+      final response = await http.put(
+        Uri.parse('$url/$id'),
+        body: jsonEncode(
+          {
+            "taskName": title,
+            "taskDescription": desc,
+          },
+        ),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (e) {
+      print(e);
     }
     return false;
   }
@@ -42,18 +50,22 @@ class NewTask {
   String desc;
   NewTask({required this.title, required this.desc});
   Future<bool> onUrl() async {
-    final response = await http.post(
-      Uri.parse(url),
-      body: jsonEncode(
-        {
-          "taskName": title,
-          "taskDescription": desc,
-        },
-      ),
-      headers: {'Content-Type': 'application/json'},
-    );
-    if (response.statusCode == 200) {
-      return true;
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        body: jsonEncode(
+          {
+            "taskName": title,
+            "taskDescription": desc,
+          },
+        ),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (e) {
+      print(e);
     }
     return false;
   }
